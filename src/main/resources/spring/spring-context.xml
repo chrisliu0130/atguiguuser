@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<context:component-scan
+		base-package="com.atguigu.*">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<context:property-placeholder
+		location="classpath:dbConfig.properties " />
+
+	<bean id="dataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${driverClassName}" />
+		<property name="jdbcUrl" value="${url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<bean id="mapperScannerConfigurer"
+		class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.atguigu.**.dao" />
+	</bean>
+
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation"
+			value="classpath:mybatis/config.xml" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath*:mybatis/mapper-*.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	
+	
+	<jaxws:endpoint address="/login" implementorClass="com.atguigu.server.LoginServer">
+		<jaxws:implementor>
+			<bean class="com.atguigu.serverimpl.LoginServerImpl"></bean>
+		</jaxws:implementor>
+	</jaxws:endpoint>
+	
+	<jaxrs:server address="/loginRest">
+		   <jaxrs:serviceBeans>
+		        <bean class="com.atguigu.serverimpl.LoginServerImpl"></bean>
+		   </jaxrs:serviceBeans> 
+	</jaxrs:server>
+	
+	<jaxws:endpoint address="/regist" implementorClass="com.atguigu.server.RegistServer">
+		<jaxws:implementor>
+			<bean class="com.atguigu.serverimpl.RegistServerImpl"></bean>
+		</jaxws:implementor>
+	</jaxws:endpoint>
+	
+	<jaxrs:server address="/registRest">
+		   <jaxrs:serviceBeans>
+		        <bean class="com.atguigu.serverimpl.RegistServerImpl"></bean>
+		   </jaxrs:serviceBeans> 
+	</jaxrs:server>
+	
+	<jaxws:endpoint address="/addAddress" implementorClass="com.atguigu.server.AddressServer">
+		<jaxws:implementor>
+			<bean class="com.atguigu.serverimpl.AddressServerImpl"></bean>
+		</jaxws:implementor>
+	</jaxws:endpoint>
+	
+	<jaxrs:server address="/addAddressRest">
+		   <jaxrs:serviceBeans>
+		        <bean class="com.atguigu.serverimpl.AddressServerImpl"></bean>
+		   </jaxrs:serviceBeans> 
+	</jaxrs:server>
+	
+	<jaxws:endpoint address="/getAddress" implementorClass="com.atguigu.server.AddressServer">
+		<jaxws:implementor>
+			<bean class="com.atguigu.serverimpl.AddressServerImpl"></bean>
+		</jaxws:implementor>
+	</jaxws:endpoint>
+	
+	<jaxrs:server address="/getAddressRest">
+	   <jaxrs:serviceBeans>
+	        <bean class="com.atguigu.serverimpl.AddressServerImpl"></bean>
+	   </jaxrs:serviceBeans> 
+	</jaxrs:server>
+</beans>
